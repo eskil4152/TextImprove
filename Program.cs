@@ -2,7 +2,7 @@
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
         Console.WriteLine("Please enter the path of the file you wish to improve: ");
 
@@ -24,6 +24,8 @@ class Program
             string fileContents = File.ReadAllText(filePath);
             Console.WriteLine("File Contents: ");
             Console.WriteLine(fileContents);
+
+            await API.SendText();
 
         } catch (FileNotFoundException)
         {
