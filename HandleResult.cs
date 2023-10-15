@@ -8,23 +8,22 @@ namespace TextImprove
 		public static void Handle(GrammarAndSpellCheck grammarAndSpellCheck)
 		{
 			Interface.DisplayMessage("Handled");
-
-			var status = grammarAndSpellCheck.status;
-			List<Error> errors = grammarAndSpellCheck.response.errors;
+			
+			List<Error> errors = grammarAndSpellCheck.Response.Errors;
 
 			foreach (Error error in errors)
 			{
 				Interface.Spacer();
 
-				Console.WriteLine("Bad: " + error.bad);
+				Console.WriteLine("Bad: " + error.Bad);
 				Console.WriteLine("Better alternative: ");
 
-				foreach (string s in error.better)
+				foreach (string s in error.Better)
 				{
 					Console.WriteLine(s);
 				}
 
-				Console.WriteLine("Description: " + error.description.en);
+				Console.WriteLine("Description: " + error.Description.En);
 			}
 		}
 	}
