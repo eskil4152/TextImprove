@@ -7,11 +7,9 @@ An app for reading texts, and improving readbility, grammar and spelling.
 - [x] Read file contents
 - [x] Link API
 - [x] Allow for different calls
-- [ ] Pass texts to API
-- [ ] Return improved text
+- [x] Pass texts to API
+- [x] Return improvements
+- [x] Allow for docx
+- [ ] Add Readability endpoint
 - [ ] Replace contents
-- [ ] Allow for docx
-- [ ] Allow for pages
-
-
-Offset = chars from 0, check word location? Check context? 
+- [ ] Allow for context to be shown, for instance x words before and after error word

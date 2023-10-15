@@ -24,6 +24,7 @@ namespace TextImprove
 				}
 
 				Console.WriteLine("Description: " + error.Description.En);
+				Interface.DisplayMessage($"Character position {error.Offset}");
 			}
 		}
 	}
