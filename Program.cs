@@ -31,7 +31,7 @@ class Program
 
             if (result != null)
             {
-                HandleResult.Handle();
+                HandleResult.Handle(result);
             } else
             {
                 Interface.DisplayError("Recieved null from API");
