@@ -8,7 +8,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="dotenv.net" Version="3.1.2" />
+    <PackageReference Include="DotNetEnv" Version="2.5.0" />
+    <PackageReference Include="Newtonsoft.JSon" Version="13.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="ApiResponses\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update=".env">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="temp.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ApiResponses\" />
+  </ItemGroup>
 </Project>

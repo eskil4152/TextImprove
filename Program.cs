@@ -1,10 +1,13 @@
-﻿namespace TextImprove;
+﻿using DotNetEnv;
+using TextImprove.ApiResponses;
+
+namespace TextImprove;
 
 class Program
 {
     static async Task Main(string[] args)
     {
-        Console.WriteLine("Please enter the path of the file you wish to improve: ");
+       Interface.DisplayMessage("Please enter the path of the file you wish to improve: ");
 
         bool validInput = false;
         string filePath = "";
@@ -22,17 +25,24 @@ class Program
         try
         {
             string fileContents = File.ReadAllText(filePath);
-            Console.WriteLine("File Contents: ");
-            Console.WriteLine(fileContents);
+            Interface.DisplayMessage("Contents read successfully");
 
-            await API.SendText();
+            GrammarAndSpellCheck? result = await API.SendText(fileContents);
+
+            if (result != null)
+            {
+                HandleResult.Handle();
+            } else
+            {
+                Interface.DisplayError("Recieved null from API");
+            }
 
         } catch (FileNotFoundException)
         {
-            Console.WriteLine("No file found at given path");
+            Interface.DisplayError("No file found at given path");
         } catch (Exception ex)
         {
-            Console.WriteLine($"An error occured: {ex}");
+            Interface.DisplayError($"An error occured: {ex}");
         }
         
     }
