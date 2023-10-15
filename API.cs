@@ -1,94 +1,66 @@
-﻿using System;
-using dotenv.net;
+﻿using System.Text.Json;
+using DotNetEnv;
+using Newtonsoft.Json;
+using TextImprove.ApiResponses;
 
 namespace TextImprove
 {
 	public class API
 	{
-		public static async Task<string?> SendText()
+		public static async Task<GrammarAndSpellCheck?> SendText(string contents)
 		{
-            DotEnv.Load();
+            Env.Load();
             var apiKey = Environment.GetEnvironmentVariable("API_KEY");
 
             if (!string.IsNullOrEmpty(apiKey))
             {
-                string? response = await GetImprovedText(apiKey);
+                GrammarAndSpellCheck? response = await GetImprovedText(apiKey, contents);
 
-                if (!string.IsNullOrEmpty(response))
+                if (response != null)
+                {
                     return response;
+                }
 
-                Console.WriteLine("No response recieved");
                 return null;
             }
 
-            Console.WriteLine("No API key found");
+            Interface.DisplayError("No API key found");
             return null;
         }
 
-        static async Task<string?> GetImprovedText(string key)
+        static async Task<GrammarAndSpellCheck?> GetImprovedText(string key, string contents)
         {
-            Console.WriteLine("What do you want to do with the text?");
-            Console.WriteLine("Press 1 for readability check");
-            Console.WriteLine("Press 2 for spelling check");
-            Console.WriteLine("Press 3 for grammar check");
+            string choice = CheckInput.CheckChoiceInput();
 
-            bool validInput = false;
-            int inputInt;
-            string choice = "";
+            using HttpClient client = new();
+            client.DefaultRequestHeaders.Add("X-RapidAPI-Key", key);
+            client.DefaultRequestHeaders.Add("X-RapidAPI-Host", "textgears-textgears-v1.p.rapidapi.com");
 
-            while (!validInput)
+            HttpResponseMessage response = await client.PostAsync($"https://textgears-textgears-v1.p.rapidapi.com/{choice}",
+                new FormUrlEncodedContent(new Dictionary<string, string> {
+                        {
+                            "text", contents
+                        }
+                })
+            );
+
+            if (response.IsSuccessStatusCode)
             {
-                string? input = Console.ReadLine();
+                Interface.DisplayMessage("API returned 200");
+                string content = await response.Content.ReadAsStringAsync();
 
-                if (input != null && int.TryParse(input, out inputInt))
-                {
-                    switch (inputInt)
-                    {
-                        case 1:
-                            choice = "readability";
-                            validInput = true;
-                            break;
+                GrammarAndSpellCheck? checkDeserialized = JsonConvert.DeserializeObject<GrammarAndSpellCheck>(content);
 
-                        case 2:
-                            choice = "spelling";
-                            validInput = true;
-                            break;
+                if (checkDeserialized == null)
+                    return null;
 
-                        case 3:
-                            choice = "grammar";
-                            validInput = true;
-                            break;
-
-                        default:
-                            Console.WriteLine("Invalid input, please enter a number between 1 and 3");
-                            continue;
-                    }
-                }
+                return checkDeserialized;
             }
-
-            using (HttpClient client = new())
+            else
             {
-                client.DefaultRequestHeaders.Add("X-RapidAPI-Key", key);
-                client.DefaultRequestHeaders.Add("X-RapidAPI-Host", "textgears-textgears-v1.p.rapidapi.com");
-
-                HttpResponseMessage response = await client.GetAsync($"https://textgears-textgears-v1.p.rapidapi.com/{choice}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    Console.WriteLine("Success");
-                    return null;
-                }
-                else
-                {
-                    Console.WriteLine("Error fetching response: " + response.ReasonPhrase);
-                    return null;
-                }
+                Interface.DisplayError("Error fetching response: " + response.ReasonPhrase);
+                return null;
             }
         }
     }
-}
-
-public class ApiResponse
-{
-    public required string Word { get; set; }
 }
