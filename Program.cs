@@ -1,5 +1,6 @@
 ﻿using DotNetEnv;
 using TextImprove.ApiResponses;
+using Xceed.Words.NET;
 
 namespace TextImprove;
 
@@ -11,6 +12,7 @@ class Program
 
         bool validInput = false;
         string filePath = "";
+        string fileContents;
 
         while (!validInput)
         {
@@ -24,7 +26,15 @@ class Program
 
         try
         {
-            string fileContents = File.ReadAllText(filePath);
+            string suffix = Path.GetExtension(filePath);
+
+            if (suffix.Equals(".docx"))
+                fileContents = ExtractTextFromDocx(filePath);
+            else
+                fileContents = File.ReadAllText(filePath);
+
+            Console.WriteLine("Content: " + fileContents);
+
             Interface.DisplayMessage("Contents read successfully");
 
             GrammarAndSpellCheck? result = await API.SendText(fileContents);
@@ -46,5 +56,12 @@ class Program
         }
         
     }
+
+    static string ExtractTextFromDocx(string path)
+    {
+        using DocX doc = DocX.Load(path);
+        return doc.Text;
+    }
+
 }
 
