@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace TextImprove.ApiResponses
 {
-	public class GrammarAndSpellCheck
+	public class GrammarAndSpellCheckModel
 	{
         [JsonProperty("status")]
         public bool Status { get; set; } = false;

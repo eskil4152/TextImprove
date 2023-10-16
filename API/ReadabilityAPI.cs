@@ -5,16 +5,13 @@ using TextImprove.ApiResponses;
 
 namespace TextImprove
 {
-	public class API
-	{
-		public static async Task<GrammarAndSpellCheck?> SendText(string contents)
-		{
-            Env.Load();
-            var apiKey = Environment.GetEnvironmentVariable("API_KEY");
-
+    public class ReadabilityAPI
+    {
+        public static async Task<ReadabilityCheckModel?> SendText(string contents, string? apiKey)
+        {
             if (!string.IsNullOrEmpty(apiKey))
             {
-                GrammarAndSpellCheck? response = await GetImprovedText(apiKey, contents);
+                ReadabilityCheckModel? response = await GetImprovedText(apiKey, contents);
 
                 if (response != null)
                 {
@@ -28,15 +25,13 @@ namespace TextImprove
             return null;
         }
 
-        static async Task<GrammarAndSpellCheck?> GetImprovedText(string key, string contents)
+        static async Task<ReadabilityCheckModel?> GetImprovedText(string key, string contents)
         {
-            string choice = CheckInput.CheckChoiceInput();
-
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("X-RapidAPI-Key", key);
             client.DefaultRequestHeaders.Add("X-RapidAPI-Host", "textgears-textgears-v1.p.rapidapi.com");
 
-            HttpResponseMessage response = await client.PostAsync($"https://textgears-textgears-v1.p.rapidapi.com/{choice}",
+            HttpResponseMessage response = await client.PostAsync($"https://textgears-textgears-v1.p.rapidapi.com/readability",
                 new FormUrlEncodedContent(new Dictionary<string, string> {
                         {
                             "text", contents
@@ -49,7 +44,7 @@ namespace TextImprove
                 Interface.DisplayMessage("API returned 200");
                 string content = await response.Content.ReadAsStringAsync();
 
-                GrammarAndSpellCheck? checkDeserialized = JsonConvert.DeserializeObject<GrammarAndSpellCheck>(content);
+                ReadabilityCheckModel? checkDeserialized = JsonConvert.DeserializeObject<ReadabilityCheckModel>(content);
 
                 if (checkDeserialized == null)
                     return null;
