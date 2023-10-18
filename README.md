@@ -10,6 +10,6 @@ An app for reading texts, and improving readbility, grammar and spelling.
 - [x] Pass texts to API
 - [x] Return improvements
 - [x] Allow for docx
-- [ ] Add Readability endpoint
+- [x] Add Readability endpoint
 - [ ] Replace contents
-- [ ] Allow for context to be shown, for instance x words before and after error word
+- [ ] Allow for context to be shown for grammar and spelling, for instance x words before and after error word

@@ -5,13 +5,13 @@ using TextImprove.ApiResponses;
 
 namespace TextImprove
 {
-    public class ReadabilityAPI
-    {
-        public static async Task<ReadabilityCheckModel?> SendText(string contents, string? apiKey)
-        {
+	public class API
+	{
+		public static async Task<ResultModel?> SendText(string contents, string choice, string? apiKey)
+		{
             if (!string.IsNullOrEmpty(apiKey))
             {
-                ReadabilityCheckModel? response = await GetImprovedText(apiKey, contents);
+                ResultModel? response = await GetImprovedText(apiKey, contents, choice);
 
                 if (response != null)
                 {
@@ -25,13 +25,13 @@ namespace TextImprove
             return null;
         }
 
-        static async Task<ReadabilityCheckModel?> GetImprovedText(string key, string contents)
+        static async Task<ResultModel?> GetImprovedText(string key, string contents, string choice)
         {
             using HttpClient client = new();
             client.DefaultRequestHeaders.Add("X-RapidAPI-Key", key);
             client.DefaultRequestHeaders.Add("X-RapidAPI-Host", "textgears-textgears-v1.p.rapidapi.com");
 
-            HttpResponseMessage response = await client.PostAsync($"https://textgears-textgears-v1.p.rapidapi.com/readability",
+            HttpResponseMessage response = await client.PostAsync($"https://textgears-textgears-v1.p.rapidapi.com/{choice}",
                 new FormUrlEncodedContent(new Dictionary<string, string> {
                         {
                             "text", contents
@@ -44,7 +44,7 @@ namespace TextImprove
                 Interface.DisplayMessage("API returned 200");
                 string content = await response.Content.ReadAsStringAsync();
 
-                ReadabilityCheckModel? checkDeserialized = JsonConvert.DeserializeObject<ReadabilityCheckModel>(content);
+                ResultModel? checkDeserialized = JsonConvert.DeserializeObject<ResultModel>(content);
 
                 if (checkDeserialized == null)
                     return null;

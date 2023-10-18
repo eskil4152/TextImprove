@@ -18,8 +18,7 @@ class Program
         string filePath = "";
         string fileContents;
 
-        ReadabilityCheckModel? readabilityCheckResult;
-        GrammarAndSpellCheckModel? grammarAndSpellCheckResult;
+        ResultModel? grammarAndSpellCheckResult;
 
         while (!validInput)
         {
@@ -44,16 +43,16 @@ class Program
 
             string choice = CheckInput.CheckChoiceInput();
 
+            grammarAndSpellCheckResult = await API.SendText(fileContents, choice, apiKey);
+
             if (choice.Equals("readability"))
             {
-                readabilityCheckResult = await ReadabilityAPI.SendText(fileContents, apiKey);
-                if (readabilityCheckResult != null)
-                    HandleResult.HandleReadabilityResult(readabilityCheckResult);
+                if (grammarAndSpellCheckResult != null)
+                    HandleResult.HandleReadabilityResult(grammarAndSpellCheckResult);
                 else
                     Interface.DisplayError("Recieved null from API");
             } else
             {
-                grammarAndSpellCheckResult = await GrammarAndSpellAPI.SendText(fileContents, choice, apiKey);
                 if (grammarAndSpellCheckResult != null)
                     HandleResult.HandleGrammarAndSpellResult(grammarAndSpellCheckResult);
                 else
