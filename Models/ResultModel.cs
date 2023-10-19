@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace TextImprove.ApiResponses
 {
-	public class GrammarAndSpellCheck
+	public class ResultModel
 	{
         [JsonProperty("status")]
         public bool Status { get; set; } = false;
@@ -15,7 +15,10 @@ namespace TextImprove.ApiResponses
     public class Response
     {
         [JsonProperty("errors")]
-        public List<Error> Errors { get; set; } = new List<Error>();
+        public List<Error>? Errors { get; set; }
+
+        [JsonProperty("stats")]
+        public Stats? Stats;
     }
 
     public class Error
@@ -46,6 +49,37 @@ namespace TextImprove.ApiResponses
     {
         [JsonProperty("en")]
         public string En { get; set; } = "";
+    }
+
+    public class Stats
+    {
+        public double smog;
+        public double colemanLiau;
+        public Counters counters;
+        public Emotion emotion;
+        public FleschKincaid fleschKincaid;
+        public double gunningFog;
+    }
+
+    public class Counters
+    {
+        public int clearLength;
+        public int length;
+        public int sentences;
+        public int words;
+    }
+
+    public class Emotion
+    {
+        public double negative;
+        public double positive;
+    }
+
+    public class FleschKincaid
+    {
+        public string grade;
+        public string interpretation;
+        public double readingEase;
     }
 }
 

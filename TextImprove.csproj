@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="ApiResponses\" />
+    <None Remove="Tools\" />
+    <None Remove="Models\" />
+    <None Remove="API\" />
   </ItemGroup>
   <ItemGroup>
     <None Update=".env">
@@ -28,6 +30,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ApiResponses\" />
+    <Folder Include="Tools\" />
+    <Folder Include="Models\" />
+    <Folder Include="API\" />
   </ItemGroup>
 </Project>

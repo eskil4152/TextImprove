@@ -1,5 +1,6 @@
 ﻿using DotNetEnv;
 using TextImprove.ApiResponses;
+using TextImprove.Tools;
 using Xceed.Words.NET;
 
 namespace TextImprove;
@@ -10,9 +11,14 @@ class Program
     {
        Interface.DisplayMessage("Please enter the path of the file you wish to improve: ");
 
+        Env.Load();
+        string? apiKey = Environment.GetEnvironmentVariable("API_KEY");
+
         bool validInput = false;
         string filePath = "";
         string fileContents;
+
+        ResultModel? grammarAndSpellCheckResult;
 
         while (!validInput)
         {
@@ -29,39 +35,36 @@ class Program
             string suffix = Path.GetExtension(filePath);
 
             if (suffix.Equals(".docx"))
-                fileContents = ExtractTextFromDocx(filePath);
+                fileContents = ExtractText.ExtractDocx(filePath);
             else
                 fileContents = File.ReadAllText(filePath);
 
-            Console.WriteLine("Content: " + fileContents);
-
             Interface.DisplayMessage("Contents read successfully");
 
-            GrammarAndSpellCheck? result = await API.SendText(fileContents);
+            string choice = CheckInput.CheckChoiceInput();
 
-            if (result != null)
+            grammarAndSpellCheckResult = await API.SendText(fileContents, choice, apiKey);
+
+            if (choice.Equals("readability"))
             {
-                HandleResult.Handle(result);
+                if (grammarAndSpellCheckResult != null)
+                    HandleResult.HandleReadabilityResult(grammarAndSpellCheckResult);
+                else
+                    Interface.DisplayError("Recieved null from API");
             } else
             {
-                Interface.DisplayError("Recieved null from API");
+                if (grammarAndSpellCheckResult != null)
+                    HandleResult.HandleGrammarAndSpellResult(grammarAndSpellCheckResult);
+                else
+                    Interface.DisplayError("Recieved null from API");
             }
-
         } catch (FileNotFoundException)
         {
             Interface.DisplayError("No file found at given path");
         } catch (Exception ex)
         {
             Interface.DisplayError($"An error occured: {ex}");
-        }
-        
+        }   
     }
-
-    static string ExtractTextFromDocx(string path)
-    {
-        using DocX doc = DocX.Load(path);
-        return doc.Text;
-    }
-
 }
 

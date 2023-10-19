@@ -46,6 +46,6 @@ namespace TextImprove
 
             return choice;
         }
-	}
+    }
 }
 
